@@ -1,4 +1,4 @@
-package ru.job4j.todo.store;
+package ru.job4j.todo.service;
 
 import ru.job4j.todo.model.Task;
 
@@ -10,7 +10,7 @@ import java.util.Optional;
  * @date: 09.03.2023
  * @project: job4j_todo
  */
-public interface TaskStore {
+public interface TaskService {
 
     Optional<Task> save(Task task);
 
