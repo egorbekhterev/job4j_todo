@@ -81,8 +81,7 @@ public class TaskController {
             model.addAttribute("message", "No task with the given ID is found.");
             return "errors/404";
         }
-        taskOptional.get().setDone(true);
-        update(taskOptional.get(), model);
+        taskService.updateDoneField(taskOptional.get());
         return "redirect:/index";
     }
 }

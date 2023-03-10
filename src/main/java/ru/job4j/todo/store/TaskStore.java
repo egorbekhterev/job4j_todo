@@ -23,4 +23,6 @@ public interface TaskStore {
     boolean update(Task task);
 
     Collection<Task> findCompleted(boolean isDone);
+
+    boolean updateDoneField(Task task);
 }

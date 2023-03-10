@@ -30,8 +30,8 @@ public class HibernateTaskStore implements TaskStore {
         try {
             session.beginTransaction();
             session.save(task);
-            rsl = Optional.of(task);
             session.getTransaction().commit();
+            rsl = Optional.of(task);
         } catch (Exception e) {
             session.getTransaction().rollback();
         } finally {
@@ -102,16 +102,8 @@ public class HibernateTaskStore implements TaskStore {
         boolean rsl = false;
         try {
             session.beginTransaction();
-            var query = session.createQuery("UPDATE Task SET description = :fDescription, created = :fCreated, "
-                            + "done = :fDone WHERE id = :fId")
-                    .setParameter("fDescription", task.getDescription())
-                    .setParameter("fCreated", task.getCreated())
-                    .setParameter("fDone", task.isDone())
-                    .setParameter("fId", task.getId())
-                    .executeUpdate();
-            if (query > 0) {
-                rsl = true;
-            }
+            session.merge(task);
+            rsl = true;
             session.getTransaction().commit();
         } catch (Exception e) {
             session.getTransaction().rollback();
@@ -137,5 +129,27 @@ public class HibernateTaskStore implements TaskStore {
             session.close();
         }
         return list;
+    }
+
+    @Override
+    public boolean updateDoneField(Task task) {
+        var session = sf.openSession();
+        boolean rsl = false;
+        try {
+            session.beginTransaction();
+            var query = session.createQuery("UPDATE Task SET done = :fDone WHERE id = :fId")
+                    .setParameter("fDone", true)
+                    .setParameter("fId", task.getId())
+                    .executeUpdate();
+            if (query > 0) {
+                rsl = true;
+            }
+            session.getTransaction().commit();
+        } catch (Exception e) {
+            session.getTransaction().rollback();
+        } finally {
+            session.close();
+        }
+        return rsl;
     }
 }

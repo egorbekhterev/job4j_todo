@@ -50,4 +50,9 @@ public class SimpleTaskService implements TaskService {
     public Collection<Task> findCompleted(boolean isDone) {
         return taskStore.findCompleted(isDone);
     }
+
+    @Override
+    public boolean updateDoneField(Task task) {
+        return taskStore.updateDoneField(task);
+    }
 }
