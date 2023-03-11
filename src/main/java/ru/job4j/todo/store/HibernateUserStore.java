@@ -2,10 +2,12 @@ package ru.job4j.todo.store;
 
 import lombok.AllArgsConstructor;
 import net.jcip.annotations.ThreadSafe;
-import org.hibernate.SessionFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
 import ru.job4j.todo.model.User;
 
+import java.util.Map;
 import java.util.Optional;
 
 /**
@@ -18,42 +20,31 @@ import java.util.Optional;
 @AllArgsConstructor
 public class HibernateUserStore implements UserStore {
 
-    private final SessionFactory sf;
+    private final CrudRepository crudRepository;
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(HibernateUserStore.class.getName());
 
     @Override
     public Optional<User> save(User user) {
-        var session = sf.openSession();
         Optional<User> rsl = Optional.empty();
         try {
-            session.beginTransaction();
-            session.save(user);
-            session.getTransaction().commit();
+            crudRepository.run(session -> {
+                session.persist(user);
+                return true;
+            });
             rsl = Optional.of(user);
         } catch (Exception e) {
-            session.getTransaction().rollback();
-        } finally {
-            session.close();
+            LOGGER.error("Error in the save(User user) method.", e);
         }
         return rsl;
     }
 
     @Override
     public Optional<User> findByLoginAndPassword(String login, String password) {
-        var session = sf.openSession();
-        Optional<User> rsl = Optional.empty();
-        try {
-            session.beginTransaction();
-            rsl = session.createQuery(
-                    "SELECT i FROM User i WHERE i.login = :fLogin AND i.password = :fPassword", User.class)
-                    .setParameter("fLogin", login)
-                    .setParameter("fPassword", password)
-                    .uniqueResultOptional();
-            session.getTransaction().commit();
-        } catch (Exception e) {
-            session.getTransaction().rollback();
-        } finally {
-            session.close();
-        }
-        return rsl;
+        return crudRepository.optional(
+                "SELECT i FROM User i WHERE i.login = :fLogin AND i.password = :fPassword", User.class,
+                Map.of("fLogin", login,
+                        "fPassword", password)
+        );
     }
 }
