@@ -47,6 +47,7 @@
                             <th>Description</th>
                             <th>Creation Date</th>
                             <th>Task Owner</th>
+                            <th>Priority</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -64,6 +65,7 @@
                             </td>
                             <td th:text="${{task.created}}"></td>
                             <td th:text="${task.user.name}"></td>
+                            <td th:text="${task.priority.name}"></td>
                         </tr>
                     </tbody>
                 </table>

@@ -39,12 +39,12 @@ public class HibernateTaskStore implements TaskStore {
 
     @Override
     public Optional<Task> findById(int id) {
-        return crudRepository.optional("SELECT i FROM Task i WHERE i.id = :fId", Task.class, Map.of("fId", id));
+        return crudRepository.optional("SELECT i FROM Task i JOIN FETCH i.priority WHERE i.id = :fId", Task.class, Map.of("fId", id));
     }
 
     @Override
     public Collection<Task> findAll() {
-        return crudRepository.query("SELECT i FROM Task i ORDER BY i.id ASC", Task.class);
+        return crudRepository.query("SELECT i FROM Task i JOIN FETCH i.priority ORDER BY i.id ASC", Task.class);
     }
 
     @Override
@@ -63,7 +63,7 @@ public class HibernateTaskStore implements TaskStore {
     @Override
     public Collection<Task> findCompleted(boolean isDone) {
         return crudRepository.query(
-                "SELECT i FROM Task i WHERE i.done = :fDone", Task.class, Map.of("fDone", isDone));
+                "SELECT i FROM Task i JOIN FETCH i.priority WHERE i.done = :fDone", Task.class, Map.of("fDone", isDone));
     }
 
     @Override
