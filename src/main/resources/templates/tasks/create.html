@@ -25,7 +25,7 @@
                     <a class="nav-item nav-link" href="/new">New Tasks</a>
                 </div>
                 <div class="d-flex" th:if="${user.name == 'Guest'}">
-                    <a class="nav-link text-secondary me-3" th:href="@{/users/register}">Sign In</a>
+                    <a class="nav-link text-secondary me-3" th:href="@{/users/register}">Sign Up</a>
                     <a class="nav-link text-secondary" th:href="@{/users/login}">Log In</a>
                 </div>
                 <div class="d-flex" th:if="${user.name != 'Guest'}">
@@ -46,6 +46,18 @@
             <div class="form-check mb-3">
                 <input type="checkbox" name="done" class="form-check-input" id="done">
                 <label class="form-check-label" for="done">Completed</label>
+            </div>
+            <div class="mb-3">
+                <label for="priority"><b>Priority</b></label>
+                <select class="form-control" id="priority" name="priority.id">
+                    <option th:each="priority : ${priorities}" th:value="${priority.id}" th:text="${priority.name}"></option>
+                </select>
+            </div>
+            <div class="mb-3">
+                <label for="category"><b>Category</b></label>
+                <select class="form-control" id="category" name="category.id" multiple required oninvalid="this.setCustomValidity('Please select at least one category.')">
+                    <option th:each="category : ${categories}" th:value="${category.id}" th:text="${category.name}"></option>
+                </select>
             </div>
             <div class="mb-3 row">
                 <div class="col-6"></div>
