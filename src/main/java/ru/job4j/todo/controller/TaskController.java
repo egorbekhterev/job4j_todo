@@ -12,6 +12,7 @@ import ru.job4j.todo.service.PriorityService;
 import ru.job4j.todo.service.TaskService;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 import java.util.List;
 
 /**
@@ -37,10 +38,8 @@ public class TaskController {
     }
 
     @PostMapping("/create")
-    public String create(@ModelAttribute Task task, Model model, HttpServletRequest request,
+    public String create(@ModelAttribute Task task, Model model, @SessionAttribute("user") User user,
                          @RequestParam("category.id") List<Integer> categoryIDs) {
-        var session = request.getSession();
-        var user = (User) session.getAttribute("user");
         if (user == null) {
             model.addAttribute("message", "No user with the given ID is found.");
             return "errors/404";
@@ -77,10 +76,8 @@ public class TaskController {
     }
 
     @PostMapping("/update")
-    public String update(@ModelAttribute Task task, Model model, HttpServletRequest request,
+    public String update(@ModelAttribute Task task, Model model, @SessionAttribute("user") User user,
                          @RequestParam("category.id") List<Integer> categoryIDs) {
-        var session = request.getSession();
-        var user = (User) session.getAttribute("user");
         if (user == null) {
             model.addAttribute("message", "No user with the given ID is found.");
             return "errors/404";
