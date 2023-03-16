@@ -23,4 +23,10 @@ public class User {
     @EqualsAndHashCode.Include
     private String login;
     private String password;
+
+    /**
+     * Поле столбца user_zone таблицы users для хранения строковых идентификаторов временных зон пользователей.
+     */
+    @Column(name = "user_zone")
+    private String timezone;
 }

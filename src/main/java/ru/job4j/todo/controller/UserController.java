@@ -4,15 +4,13 @@ import lombok.AllArgsConstructor;
 import net.jcip.annotations.ThreadSafe;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 import ru.job4j.todo.service.UserService;
 import ru.job4j.todo.model.User;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
+import java.util.TimeZone;
 
 /**
  * @author: Egor Bekhterev
@@ -91,5 +89,38 @@ public class UserController {
     public String logout(HttpSession session) {
         session.invalidate();
         return "redirect:/users/login";
+    }
+
+    /**
+     * GET-метод для получения профиля пользователя, содержит список доступных для выбора временных зон.
+     * @param model- модель для сборки представления.
+     * @return путь к представлению.
+     */
+    @GetMapping("/{id}")
+    public String getUserProfile(Model model) {
+        model.addAttribute("zones", userService.findTimeZones());
+        return "users/one";
+    }
+
+    /**
+     * POST-метод для обновления профиля пользователя, а именно изменения временной зоны пользователя.
+     * @param user - пользователь, содержащий текущую установку временной зоны или значение по умолчанию.
+     * @param model - модель для сборки представлений.
+     * @param timezone - временная зона, получаемая из выпадающего списка.
+     * @return путь к представлению.
+     */
+    @PostMapping("/update")
+    public String update(@SessionAttribute("user") User user, Model model, @RequestParam("zone.id") TimeZone timezone) {
+        if (user == null) {
+            model.addAttribute("message", "No user with the given ID is found.");
+            return "errors/404";
+        }
+        user.setTimezone(timezone.getID());
+        var isUpdated = userService.updateTimezone(user);
+        if (!isUpdated) {
+            model.addAttribute("message", "No user with the given ID is found.");
+            return "errors/404";
+        }
+        return "redirect:/index";
     }
 }

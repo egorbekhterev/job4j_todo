@@ -47,4 +47,16 @@ public class HibernateUserStore implements UserStore {
                         "fPassword", password)
         );
     }
+
+    /**
+     * Записывает часовой пояс пользователя {@link User} в таблицу users по ID текущей сессии пользователя.
+     * @param user - пользователь текущей сессии.
+     * @return true - если изменение поля произведено, иначе false.
+     */
+    @Override
+    public boolean updateTimezone(User user) {
+            return crudRepository.run("UPDATE User SET timezone = :fTimezone WHERE id = :fId", Map.of(
+                    "fTimezone", user.getTimezone(),
+                    "fId", user.getId()));
+    }
 }

@@ -10,9 +10,8 @@ import ru.job4j.todo.model.User;
 import ru.job4j.todo.service.CategoryService;
 import ru.job4j.todo.service.PriorityService;
 import ru.job4j.todo.service.TaskService;
+import ru.job4j.todo.util.TaskTimezoneSetter;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
 import java.util.List;
 
 /**
@@ -52,18 +51,19 @@ public class TaskController {
     }
 
     @GetMapping("/{id}")
-    public String getById(Model model, @PathVariable int id) {
+    public String getById(Model model, @PathVariable int id, @SessionAttribute("user") User user) {
         var taskOptional = taskService.findById(id);
         if (taskOptional.isEmpty()) {
             model.addAttribute("message", "No task with the given ID is found.");
             return "errors/404";
         }
+        TaskTimezoneSetter.setTimezone(taskOptional.get(), user);
         model.addAttribute("task", taskOptional.get());
         return "tasks/one";
     }
 
     @GetMapping("update/{id}")
-    public String getByIdUpdate(Model model, @PathVariable int id) {
+    public String getByIdUpdate(Model model, @PathVariable int id, @SessionAttribute("user") User user) {
         var taskOptional = taskService.findById(id);
         if (taskOptional.isEmpty()) {
             model.addAttribute("message", "No task with the given ID is found.");
@@ -71,6 +71,7 @@ public class TaskController {
         }
         model.addAttribute("categories", categoryService.findAll());
         model.addAttribute("priorities", priorityService.findAll());
+        TaskTimezoneSetter.setTimezone(taskOptional.get(), user);
         model.addAttribute("task", taskOptional.get());
         return "tasks/update/one";
     }

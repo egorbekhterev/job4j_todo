@@ -14,4 +14,6 @@ public interface UserStore {
     Optional<User> save(User user);
 
     Optional<User> findByLoginAndPassword(String login, String password);
+
+    boolean updateTimezone(User user);
 }
