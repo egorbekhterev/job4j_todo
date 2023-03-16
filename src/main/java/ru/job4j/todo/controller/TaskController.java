@@ -37,12 +37,8 @@ public class TaskController {
     }
 
     @PostMapping("/create")
-    public String create(@ModelAttribute Task task, Model model, @SessionAttribute("user") User user,
+    public String create(@ModelAttribute Task task, Model model, @SessionAttribute(required = false) User user,
                          @RequestParam("category.id") List<Integer> categoryIDs) {
-        if (user == null) {
-            model.addAttribute("message", "No user with the given ID is found.");
-            return "errors/404";
-        }
         task.setUser(user);
         var categories = categoryService.findByIDs(categoryIDs);
         task.setCategories(categories);
@@ -51,7 +47,7 @@ public class TaskController {
     }
 
     @GetMapping("/{id}")
-    public String getById(Model model, @PathVariable int id, @SessionAttribute("user") User user) {
+    public String getById(Model model, @PathVariable int id, @SessionAttribute(required = false) User user) {
         var taskOptional = taskService.findById(id);
         if (taskOptional.isEmpty()) {
             model.addAttribute("message", "No task with the given ID is found.");
@@ -63,7 +59,7 @@ public class TaskController {
     }
 
     @GetMapping("update/{id}")
-    public String getByIdUpdate(Model model, @PathVariable int id, @SessionAttribute("user") User user) {
+    public String getByIdUpdate(Model model, @PathVariable int id, @SessionAttribute(required = false) User user) {
         var taskOptional = taskService.findById(id);
         if (taskOptional.isEmpty()) {
             model.addAttribute("message", "No task with the given ID is found.");
@@ -79,10 +75,6 @@ public class TaskController {
     @PostMapping("/update")
     public String update(@ModelAttribute Task task, Model model, @SessionAttribute("user") User user,
                          @RequestParam("category.id") List<Integer> categoryIDs) {
-        if (user == null) {
-            model.addAttribute("message", "No user with the given ID is found.");
-            return "errors/404";
-        }
         task.setUser(user);
         var categories = categoryService.findByIDs(categoryIDs);
         if (categories.isEmpty()) {

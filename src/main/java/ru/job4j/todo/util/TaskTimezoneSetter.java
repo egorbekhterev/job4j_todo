@@ -21,7 +21,13 @@ public class TaskTimezoneSetter {
      * @param user - пользователь, чей часовой пояс используется при установке времени создания задачи.
      */
     public static void setTimezone(Task task, User user) {
-        var userTimeZone = user.getTimezone() != null ? ZoneId.of(user.getTimezone()) : TimeZone.getDefault().toZoneId();
+        ZoneId userTimeZone;
+        if (user == null) {
+            userTimeZone = TimeZone.getDefault().toZoneId();
+        } else {
+            userTimeZone = user.getTimezone() != null ? ZoneId
+                    .of(user.getTimezone()) : TimeZone.getDefault().toZoneId();
+        }
         task.setCreated(task.getCreated().atZone(ZoneOffset.systemDefault())
                 .withZoneSameInstant(userTimeZone).toLocalDateTime());
     }

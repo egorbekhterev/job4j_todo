@@ -25,7 +25,7 @@ public class IndexController {
     private final TaskService taskService;
 
     @GetMapping({"/", "/index"})
-    public String getTasks(Model model, @SessionAttribute("user") User user) {
+    public String getTasks(Model model, @SessionAttribute(required = false) User user) {
         var tasks = taskService.findAll();
         tasks.forEach(task -> TaskTimezoneSetter.setTimezone(task, user));
         model.addAttribute("tasks", tasks);
@@ -33,7 +33,7 @@ public class IndexController {
     }
 
     @GetMapping("/completed")
-    public String getCompletedTasks(Model model, @SessionAttribute("user") User user) {
+    public String getCompletedTasks(Model model, @SessionAttribute(required = false) User user) {
         var tasks = taskService.findCompleted(true);
         tasks.forEach(task -> TaskTimezoneSetter.setTimezone(task, user));
         model.addAttribute("tasks", tasks);
@@ -41,7 +41,7 @@ public class IndexController {
     }
 
     @GetMapping("/new")
-    public String getNewTasks(Model model, @SessionAttribute("user") User user) {
+    public String getNewTasks(Model model, @SessionAttribute(required = false) User user) {
         var tasks = taskService.findCompleted(false);
         tasks.forEach(task -> TaskTimezoneSetter.setTimezone(task, user));
         model.addAttribute("tasks", tasks);

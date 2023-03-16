@@ -26,10 +26,12 @@ public class AutorizationFilter extends HttpFilter {
     /**
      * Проверяет, что входящий адрес не является общедоступным.
      * @param uri - входящий адрес.
-     * @return true - общедоступный адрес, false - закрытый адрес.
+     * @return false - общедоступный адрес, true - закрытый адрес.
      */
-    private boolean isAlwaysPermitted(String uri) {
-        return uri.startsWith("/users/register") || uri.startsWith("/users/login");
+    private boolean isNotPermitted(String uri) {
+        return uri.startsWith("/tasks/create") || uri.startsWith("/tasks/update")
+                || uri.startsWith("/users/update") || uri.startsWith("/tasks/complete/")
+                || uri.startsWith("/tasks/delete/");
     }
 
     /**
@@ -43,7 +45,7 @@ public class AutorizationFilter extends HttpFilter {
     @Override
     public void doFilter(HttpServletRequest request, HttpServletResponse response, FilterChain chain) throws IOException, ServletException {
         var uri = request.getRequestURI();
-        if (isAlwaysPermitted(uri)) {
+        if (!isNotPermitted(uri)) {
             chain.doFilter(request, response);
             return;
         }

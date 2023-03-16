@@ -111,10 +111,6 @@ public class UserController {
      */
     @PostMapping("/update")
     public String update(@SessionAttribute("user") User user, Model model, @RequestParam("zone.id") TimeZone timezone) {
-        if (user == null) {
-            model.addAttribute("message", "No user with the given ID is found.");
-            return "errors/404";
-        }
         user.setTimezone(timezone.getID());
         var isUpdated = userService.updateTimezone(user);
         if (!isUpdated) {
