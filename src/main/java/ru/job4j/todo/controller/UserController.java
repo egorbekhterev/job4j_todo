@@ -47,7 +47,7 @@ public class UserController {
             model.addAttribute("message", "A user with this email already exists.");
             return "errors/404";
         }
-        return "redirect:/register";
+        return "redirect:/index";
     }
 
     /**
